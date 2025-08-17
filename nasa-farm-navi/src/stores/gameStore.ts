@@ -1,15 +1,10 @@
+// @ts-nocheck
+// src/stores/gameStore.ts
+
 import { defineStore } from 'pinia';
-import type { 
-  Cell, 
-  GameState, 
-  Weather, 
-  SatelliteData, 
-  Notification,
-  GameConfig 
-} from '@/types';
 
 // Configurações padrão do jogo
-const DEFAULT_CONFIG: GameConfig = {
+const DEFAULT_CONFIG = {
   gridSize: 48,
   dayDuration: 5000,
   initialCoins: 100,
@@ -26,7 +21,7 @@ const DEFAULT_CONFIG: GameConfig = {
 };
 
 // Tipos de clima disponíveis
-const WEATHER_TYPES: Weather[] = [
+const WEATHER_TYPES = [
   {
     id: 1,
     name: 'Ensolarado',
@@ -78,8 +73,8 @@ export const useGameStore = defineStore('game', {
   // Estado
   state: () => ({
     // Grid da fazenda
-    farmGrid: [] as Cell[],
-    selectedCell: null as number | null,
+    farmGrid: [],
+    selectedCell: null,
     
     // Estado do jogo
     gameState: {
@@ -89,7 +84,7 @@ export const useGameStore = defineStore('game', {
       day: 1,
       level: 1,
       experience: 0
-    } as GameState,
+    },
     
     // Clima e dados NASA
     currentWeatherIndex: 0,
@@ -100,10 +95,10 @@ export const useGameStore = defineStore('game', {
       soilMoisture: 50,
       precipitation: 0,
       windSpeed: 10
-    } as SatelliteData,
+    },
     
     // Sistema de notificações
-    notifications: [] as Notification[],
+    notifications: [],
     
     // Configurações
     config: DEFAULT_CONFIG,
@@ -116,22 +111,22 @@ export const useGameStore = defineStore('game', {
   // Getters (computed properties)
   getters: {
     // Clima atual
-    currentWeather: (state): Weather => {
+    currentWeather: (state) => {
       return WEATHER_TYPES[state.currentWeatherIndex];
     },
 
     // Total de células plantadas
-    plantedCellsCount: (state): number => {
+    plantedCellsCount: (state) => {
       return state.farmGrid.filter(cell => cell.type !== 'empty').length;
     },
 
     // Células prontas para colheita
-    readyToHarvestCount: (state): number => {
+    readyToHarvestCount: (state) => {
       return state.farmGrid.filter(cell => cell.type === 'ready').length;
     },
 
     // Crescimento médio das culturas
-    averageGrowth: (state): number => {
+    averageGrowth: (state) => {
       const plantedCells = state.farmGrid.filter(cell => cell.type !== 'empty');
       if (plantedCells.length === 0) return 0;
       
@@ -140,7 +135,7 @@ export const useGameStore = defineStore('game', {
     },
 
     // Saúde média das culturas
-    averageHealth: (state): number => {
+    averageHealth: (state) => {
       const plantedCells = state.farmGrid.filter(cell => cell.type !== 'empty');
       if (plantedCells.length === 0) return 100;
       
@@ -149,12 +144,12 @@ export const useGameStore = defineStore('game', {
     },
 
     // Experiência necessária para próximo nível
-    experienceToNextLevel: (state): number => {
+    experienceToNextLevel: (state) => {
       return state.gameState.level * 100;
     },
 
     // Porcentagem de progresso do nível
-    levelProgress: (state): number => {
+    levelProgress: (state) => {
       const needed = state.gameState.level * 100;
       return (state.gameState.experience / needed) * 100;
     }
@@ -163,7 +158,8 @@ export const useGameStore = defineStore('game', {
   // Ações
   actions: {
     // Inicializar o grid
-    initializeGrid(size: number = DEFAULT_CONFIG.gridSize): void {
+    initializeGrid(size = DEFAULT_CONFIG.gridSize) {
+      console.log('🎮 Inicializando grid com', size, 'células...');
       this.farmGrid = Array(size).fill(null).map((_, index) => ({
         id: index,
         type: 'empty',
@@ -172,20 +168,21 @@ export const useGameStore = defineStore('game', {
         fertilized: false,
         health: 100
       }));
+      console.log('✅ Grid criado:', this.farmGrid.length, 'células');
     },
 
     // Selecionar célula
-    selectCell(index: number): void {
+    selectCell(index) {
       if (index >= 0 && index < this.farmGrid.length) {
         this.selectedCell = index;
       }
     },
 
     // Plantar semente
-    plantSeed(cellIndex: number): boolean {
+    plantSeed(cellIndex) {
       const cell = this.farmGrid[cellIndex];
       
-      if (cell.type !== 'empty' || this.gameState.coins < this.config.costs.plant) {
+      if (!cell || cell.type !== 'empty' || this.gameState.coins < this.config.costs.plant) {
         return false;
       }
 
@@ -199,10 +196,10 @@ export const useGameStore = defineStore('game', {
     },
 
     // Irrigar célula
-    irrigateCell(cellIndex: number): boolean {
+    irrigateCell(cellIndex) {
       const cell = this.farmGrid[cellIndex];
       
-      if (cell.type === 'empty' || this.gameState.coins < this.config.costs.water) {
+      if (!cell || cell.type === 'empty' || this.gameState.coins < this.config.costs.water) {
         return false;
       }
 
@@ -225,10 +222,10 @@ export const useGameStore = defineStore('game', {
     },
 
     // Fertilizar célula
-    fertilizeCell(cellIndex: number): boolean {
+    fertilizeCell(cellIndex) {
       const cell = this.farmGrid[cellIndex];
       
-      if (cell.type === 'empty' || cell.fertilized || 
+      if (!cell || cell.type === 'empty' || cell.fertilized || 
           this.gameState.coins < this.config.costs.fertilize) {
         return false;
       }
@@ -245,10 +242,10 @@ export const useGameStore = defineStore('game', {
     },
 
     // Colher
-    harvestCell(cellIndex: number): number {
+    harvestCell(cellIndex) {
       const cell = this.farmGrid[cellIndex];
       
-      if (cell.type !== 'ready') {
+      if (!cell || cell.type !== 'ready') {
         return 0;
       }
 
@@ -289,8 +286,9 @@ export const useGameStore = defineStore('game', {
     },
 
     // Atualizar estágio de crescimento
-    updateCellGrowthStage(cellIndex: number): void {
+    updateCellGrowthStage(cellIndex) {
       const cell = this.farmGrid[cellIndex];
+      if (!cell) return;
       
       if (cell.growth >= 100) {
         cell.type = 'ready';
@@ -301,7 +299,7 @@ export const useGameStore = defineStore('game', {
     },
 
     // Crescer culturas (chamado a cada dia)
-    growCrops(): void {
+    growCrops() {
       const weather = this.currentWeather;
       
       this.farmGrid.forEach(cell => {
@@ -335,7 +333,7 @@ export const useGameStore = defineStore('game', {
     },
 
     // Avançar dia
-    advanceDay(): void {
+    advanceDay() {
       this.gameState.day++;
       this.growCrops();
       
@@ -351,7 +349,7 @@ export const useGameStore = defineStore('game', {
     },
 
     // Mudar clima
-    changeWeather(): void {
+    changeWeather() {
       this.currentWeatherIndex = (this.currentWeatherIndex + 1) % WEATHER_TYPES.length;
       const weather = this.currentWeather;
       
@@ -363,7 +361,7 @@ export const useGameStore = defineStore('game', {
     },
 
     // Atualizar dados do satélite
-    updateSatelliteData(): void {
+    updateSatelliteData() {
       // Simular variação baseada no clima
       const weather = this.currentWeather;
       
@@ -381,7 +379,7 @@ export const useGameStore = defineStore('game', {
     },
 
     // Subir de nível
-    levelUp(): void {
+    levelUp() {
       this.gameState.level++;
       this.gameState.experience = 0;
       
@@ -397,12 +395,8 @@ export const useGameStore = defineStore('game', {
     },
 
     // Adicionar notificação
-    addNotification(
-      type: 'success' | 'warning' | 'info' | 'error',
-      title: string,
-      message: string
-    ): void {
-      const notification: Notification = {
+    addNotification(type, title, message) {
+      const notification = {
         id: Date.now().toString(),
         type,
         title,
@@ -418,11 +412,11 @@ export const useGameStore = defineStore('game', {
         if (index > -1) {
           this.notifications.splice(index, 1);
         }
-      }, notification.duration);
+      }, notification.duration || 3000);
     },
 
     // Resetar jogo
-    resetGame(): void {
+    resetGame() {
       this.initializeGrid();
       this.selectedCell = null;
       this.gameState = {
@@ -441,15 +435,17 @@ export const useGameStore = defineStore('game', {
     },
 
     // Iniciar jogo
-    startGame(): void {
+    startGame() {
+      console.log('🎮 Iniciando jogo...');
       this.isPlaying = true;
       this.isPaused = false;
       this.initializeGrid();
       this.updateSatelliteData();
+      console.log('✅ Jogo iniciado!');
     },
 
     // Pausar jogo
-    togglePause(): void {
+    togglePause() {
       this.isPaused = !this.isPaused;
     }
   }

@@ -1,27 +1,24 @@
-import { createApp } from 'vue';
-import { createPinia } from 'pinia';
-import App from './App.vue';
+// src/main.ts
 
-// Importar estilos globais
-import './assets/styles/main.css';
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 
-// Criar aplicação Vue
-const app = createApp(App);
+// Criar Pinia PRIMEIRO
+const pinia = createPinia()
 
-// Criar e usar Pinia para gerenciamento de estado
-const pinia = createPinia();
-app.use(pinia);
+// Fazer Pinia global para debug
+window.__pinia = pinia
 
-// Configurações globais (opcional)
-app.config.globalProperties.$appName = 'NASA Farm Navigator';
-app.config.globalProperties.$version = '1.0.0';
+// Importar App DEPOIS
+import App from './App.vue'
 
-// Tratamento de erros global
-app.config.errorHandler = (err, instance, info) => {
-  console.error('Erro global:', err);
-  console.error('Componente:', instance);
-  console.error('Info:', info);
-};
+// Criar app
+const app = createApp(App)
 
-// Montar aplicação
-app.mount('#app');
+// Usar Pinia
+app.use(pinia)
+
+// Montar
+app.mount('#app')
+
+console.log('✅ App montado com Pinia global!')

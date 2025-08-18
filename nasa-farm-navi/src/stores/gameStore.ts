@@ -1,6 +1,6 @@
-// src/stores/gameStore.ts
+import type { Cell, GameState, Weather, SatelliteData, Notification } from '@/types'
 import { defineStore } from 'pinia';
-import type { Cell, GameState, Weather, SatelliteData, Notification } from '@/types';
+
 
 // Configurações padrão do jogo
 const DEFAULT_CONFIG = {

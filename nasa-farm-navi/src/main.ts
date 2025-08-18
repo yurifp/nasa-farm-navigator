@@ -1,10 +1,14 @@
-// src/main.ts
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 
-const app = createApp(App)
-const pinia = createPinia()
+// Estilos globais (reset + utilitários que você já tem no main.css)
+import './assets/styles/main.css'
 
-app.use(pinia)
+const app = createApp(App)
+
+// Ativar o Pinia (store global)
+app.use(createPinia())
+
+// Montar a aplicação no index.html (#app)
 app.mount('#app')

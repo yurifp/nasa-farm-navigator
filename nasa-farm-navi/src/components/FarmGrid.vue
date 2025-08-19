@@ -13,21 +13,21 @@
         ]"
         @click="$emit('cell-click', index)"
       >
-        <!-- Ícone da planta -->
+     
         <span class="cell-icon">{{ getCellIcon(cell) }}</span>
         
-        <!-- Indicador de crescimento -->
+       
         <div v-if="cell.growth > 0" class="growth-indicator">
           {{ cell.growth }}%
         </div>
         
-        <!-- Indicadores de status -->
+     
         <div class="status-indicators">
           <span v-if="cell.irrigated" class="status-icon water">💧</span>
           <span v-if="cell.fertilized" class="status-icon fertilizer">✨</span>
         </div>
         
-        <!-- Barra de saúde -->
+       
         <div v-if="cell.type !== 'empty'" class="health-bar">
           <div 
             class="health-fill" 
@@ -38,7 +38,7 @@
       </div>
     </div>
     
-    <!-- Legenda -->
+
     <div class="grid-legend">
       <div class="legend-item">
         <span class="legend-icon">🟫</span>
@@ -63,18 +63,18 @@
 <script setup lang="ts">
 import type { Cell } from '@/types';
 
-// Props
+
 const props = defineProps<{
   cells: Cell[];
   selectedCell: number | null;
 }>();
 
-// Emits
+
 const emit = defineEmits<{
   'cell-click': [index: number];
 }>();
 
-// Funções auxiliares
+
 function getCellClass(cell: Cell): string {
   if (cell.type === 'ready') return 'ready';
   if (cell.fertilized) return 'fertilized';
@@ -125,7 +125,7 @@ function getHealthClass(health: number): string {
   margin-bottom: 20px;
 }
 
-/* Responsivo */
+
 @media (max-width: 768px) {
   .grid-container {
     grid-template-columns: repeat(6, 1fr);
@@ -164,7 +164,7 @@ function getHealthClass(health: number): string {
   box-shadow: 0 0 20px rgba(159, 122, 234, 0.4);
 }
 
-/* Classes de estado */
+
 .grid-cell.empty {
   background: linear-gradient(135deg, #8B6914 0%, #CD9B1D 100%);
 }

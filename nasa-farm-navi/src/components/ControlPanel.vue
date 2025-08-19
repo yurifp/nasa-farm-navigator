@@ -2,7 +2,7 @@
   <div class="control-panel">
     <h2 class="panel-title">🎮 Controles</h2>
     
-    <!-- Ações principais -->
+
     <div class="action-buttons">
       <button 
         class="action-btn btn-plant"
@@ -49,7 +49,7 @@
       </button>
     </div>
     
-    <!-- Ações especiais -->
+ 
     <div class="special-actions">
       <button 
         class="action-btn btn-satellite"
@@ -72,7 +72,7 @@
       </button>
     </div>
     
-    <!-- Ações do sistema -->
+
     <div class="system-actions">
       <button 
         class="action-btn btn-reset"
@@ -91,7 +91,7 @@
       </button>
     </div>
     
-    <!-- Teclas de atalho -->
+
     <div class="shortcuts">
       <h3>⌨️ Atalhos</h3>
       <div class="shortcut-list">
@@ -122,7 +122,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import type { GameAction } from '@/types';
 
-// Props
+
 const props = defineProps<{
   disabledActions: {
     plant: boolean;
@@ -133,21 +133,20 @@ const props = defineProps<{
   isPaused: boolean;
 }>();
 
-// Emits
+
 const emit = defineEmits<{
   'action': [action: GameAction];
   'toggle-pause': [];
   'show-help': [];
 }>();
 
-// Estado local
+
 const satelliteCooldown = ref(0);
 let cooldownInterval: number | null = null;
 
-// Funções
 function handleAction(action: GameAction): void {
   if (action === 'satellite' && satelliteCooldown.value === 0) {
-    // Iniciar cooldown de 30 segundos
+   
     satelliteCooldown.value = 30;
     startCooldown();
   }
@@ -178,9 +177,9 @@ function startCooldown(): void {
   }, 1000);
 }
 
-// Atalhos de teclado
+
 function handleKeyPress(event: KeyboardEvent): void {
-  // Ignorar se estiver digitando em um input
+
   if (event.target instanceof HTMLInputElement) return;
   
   switch (event.key.toLowerCase()) {
@@ -216,7 +215,6 @@ function handleKeyPress(event: KeyboardEvent): void {
   }
 }
 
-// Lifecycle
 onMounted(() => {
   window.addEventListener('keydown', handleKeyPress);
 });
@@ -343,7 +341,7 @@ onUnmounted(() => {
   50% { opacity: 0.7; }
 }
 
-/* Cores dos botões */
+
 .btn-plant {
   background: linear-gradient(135deg, #48bb78, #38a169);
 }
